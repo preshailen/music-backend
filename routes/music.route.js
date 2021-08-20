@@ -23,6 +23,13 @@ const router = express.Router();
         res.status(500).send(err);
       }
     });
+    router.get('/get-album/:id', async (req, res) => {
+      try {
+        res.send(await Album.findById(req.params.id));
+      } catch (err) {
+        res.status(500).send(err);
+      }
+    })
     router.put('/edit-album', async (req, res) => {
       try {
         const existingAlbum = await Album.findById({ '_id': req.body._id});
@@ -61,23 +68,7 @@ const router = express.Router();
     });
     router.get('/get-dsps', async (req, res) => {
       try {
-        res.send(await DSP.find().sort({ id: 1 }));
-      } catch (err) {
-        res.status(500).send(err);
-      }
-    });
-    router.put('/edit-dsp', async (req, res) => {
-      try {
-        const existingDSP = await DSP.findById({ '_id': req.body._id});
-        if (existingDSP != null) {
-          existingDSP.id = req.body.id;
-          existingDSP.name = req.body.name;
-          existingDSP.logo = req.body.logo;
-          await existingDSP.save();
-          res.send(existingDSP);
-        } else {
-          res.send(null);
-        }
+        res.send(await DSP.find().sort({ service: 1 }));
       } catch (err) {
         res.status(500).send(err);
       }
@@ -129,7 +120,7 @@ const router = express.Router();
         res.send(await Social.findByIdAndDelete({ '_id': req.params.id }));
       } catch (err) {
         res.status(500).send(err);
-      }
+      } 
     });
   /*Socials*/
 
@@ -145,7 +136,14 @@ const router = express.Router();
     })
     router.get('/get-links/:id', async (req, res) => {
       try {
-        res.send(await Link.find());
+        res.send(await Link.find({ 'id': req.params.id }));
+      } catch (err) {
+        res.status(500).send(err);
+      }
+    });
+    router.delete('/delete-link/:id', async (req, res) => {
+      try {
+        res.send(await Link.findByIdAndDelete({ '_id': req.params.id }));
       } catch (err) {
         res.status(500).send(err);
       }
